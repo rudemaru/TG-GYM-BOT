@@ -6,7 +6,8 @@ import (
 
 func createMenu() tgbotapi.ReplyKeyboardMarkup {
 	var TimerButtonText, AddSetButtonText, SkipSetButton string
-	if isRunning {
+
+	if timerRunning {
 		TimerButtonText = "Завершить тренировку"
 	} else {
 		TimerButtonText = "Начать тренировку"
