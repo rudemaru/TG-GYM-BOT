@@ -104,7 +104,10 @@ func (b *Bot) stopTimer(message *tgbotapi.Message) {
 	msg := fmt.Sprintf("Таймер остановлен. Длительность тренировки: %s", durationFormatted)
 	b.sendResponse(message, msg)
 	timerRunning = false
-	workingSet.valid = false
+
+	if workingSet != nil {
+		workingSet.valid = false
+	}
 }
 
 func (b *Bot) addSet(message *tgbotapi.Message) {
