@@ -6,11 +6,14 @@ import (
 
 	"github.com/rudemaru/TG-GYM-BOT/internal/bot"
 	"github.com/rudemaru/TG-GYM-BOT/internal/config"
+	"github.com/rudemaru/TG-GYM-BOT/internal/db"
 )
 
 func main() {
 	cfg := config.MustLoad()
 	fmt.Println(cfg)
+
+	db.InitDB(cfg)
 
 	bot, err := bot.NewBot(cfg.TelegramBotToken)
 	if err != nil {

@@ -57,12 +57,38 @@ func (b *Bot) Start() {
 func (b *Bot) handleCommand(message *tgbotapi.Message) {
 	switch message.Text {
 	case "Начать тренировку":
-		b.startTimer(message)
+		{
+			b.startTimer(message)
+		}
 	case "Завершить тренировку":
-		b.stopTimer(message)
-	case "Занести подход":
-		log.Printf("[handleCommand] WeightChoosing: %v, RepChoosing: %v, WorkingSet is nil: %v", weightChoosing, repChoosing, workingSet == nil)
-		b.addSet(message)
+		{
+			b.stopTimer(message)
+		}
+	case "Добавить подход":
+		{
+			//log.Printf("[handleCommand]WeightChoosing: %v, RepChoosing: %v, WorkingSet is nil: %v", weightChoosing, repChoosing, workingSet == nil)
+			b.addSet(message)
+		}
+	case "Новая тренировка":
+		{
+			CurrentPage = "Current session"
+			b.sendResponse(message, "Новая тренировка")
+		}
+	case "Прошлые тренировки":
+		{
+			CurrentPage = "Previous sessions"
+			b.sendResponse(message, "Прошлые тренировки")
+		}
+	case "Статистика":
+		{
+			CurrentPage = "Statistics"
+			b.sendResponse(message, "Статистика")
+		}
+	case "Главное меню":
+		{
+			CurrentPage = "Main menu"
+			b.sendResponse(message, "Главное меню")
+		}
 	default:
 		b.handleDefault(message)
 	}
@@ -102,9 +128,12 @@ func (b *Bot) stopTimer(message *tgbotapi.Message) {
 	durationFormatted := formatDuration(duration)
 
 	msg := fmt.Sprintf("Таймер остановлен. Длительность тренировки: %s", durationFormatted)
-	b.sendResponse(message, msg)
 	timerRunning = false
-	workingSet.valid = false
+	b.sendResponse(message, msg)
+
+	if workingSet != nil {
+		workingSet.valid = false
+	}
 }
 
 func (b *Bot) addSet(message *tgbotapi.Message) {
@@ -113,7 +142,7 @@ func (b *Bot) addSet(message *tgbotapi.Message) {
 		return
 	}
 
-	log.Printf("[addSet]WeightChoosing: %v, RepChoosing: %v, WorkingSet is nil: %v", weightChoosing, repChoosing, workingSet == nil)
+	//log.Printf("[addSet]WeightChoosing: %v, RepChoosing: %v, WorkingSet is nil: %v", weightChoosing, repChoosing, workingSet == nil)
 
 	if workingSet == nil || !workingSet.valid {
 		workingSet = new(set)
@@ -129,11 +158,11 @@ func (b *Bot) addSet(message *tgbotapi.Message) {
 }
 
 func (b *Bot) sendDefaultMessage(message *tgbotapi.Message) {
-	b.sendResponse(message, "Используйте меню ниже для управления ботом.")
+	b.sendResponse(message, "Это еще не реализовано :(")
 }
 
 func (b *Bot) sendResponse(message *tgbotapi.Message, text string) {
-	log.Printf("[sendResponse]WeightChoosing: %v, RepChoosing: %v, WorkingSet is nil: %v", weightChoosing, repChoosing, workingSet == nil)
+	//log.Printf("[sendResponse]WeightChoosing: %v, RepChoosing: %v, WorkingSet is nil: %v", weightChoosing, repChoosing, workingSet == nil)
 	msg := tgbotapi.NewMessage(message.Chat.ID, text)
 	msg.ReplyMarkup = createMenu()
 	b.API.Send(msg)
@@ -181,7 +210,6 @@ func (b *Bot) processRepetitionsInput(message *tgbotapi.Message, workingSet *set
 	workingSet.valid = false
 	weightChoosing = false
 	repChoosing = false
-	log.Printf("WorkingSet is nil after processing repetitions: %v", workingSet == nil)
 }
 
 func formatDuration(duration time.Duration) string {

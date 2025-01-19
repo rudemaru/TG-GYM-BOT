@@ -8,9 +8,18 @@ import (
 )
 
 type Config struct {
-	Env              string `yaml:"env" env-default:"local"`
-	TelegramBotToken string `yaml:"telegram_bot_token" env-required:"true"`
-	StoragePath      string `yaml:"storage_path" env-required:"true"`
+	Env              string         `yaml:"env" env-default:"local"`
+	TelegramBotToken string         `yaml:"telegram_bot_token" env-required:"true"`
+	Postgres         PostgresConfig `yaml:"postgres"`
+}
+
+type PostgresConfig struct {
+	Host     string `yaml:"host" env-required:"true"`
+	Port     int    `yaml:"port" env-default:"5432"`
+	User     string `yaml:"user" env-required:"true"`
+	Password string `yaml:"password" env-required:"true"`
+	DBName   string `yaml:"dbname" env-required:"true"`
+	SSLMode  string `yaml:"sslmode" env-default:"disable"`
 }
 
 func MustLoad() *Config {
